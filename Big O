@@ -1,0 +1,328 @@
+//Bài 2: Students' scores
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(float arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + (float)rand()/ RAND_MAX * (max - min);
+}
+
+void sortArray(float arr[], int n, int *comps){
+    *comps = 0;
+    for(int i=0; i<n-1; i++){
+        int min_index = i;
+        for(int j=i+1; j<n; j++){
+            (*comps)++;
+            if (arr[min_index] > arr[j]){
+                min_index = j;
+            }
+        }
+        float temp;
+        temp = arr[min_index];
+        arr[min_index] = arr[i];
+        arr[i] = temp;
+    }
+}
+
+int main() {
+    float arr[1000];
+    int n = 40;
+    int comps;
+    int k[] = {100,1000,10000};
+    //Sinh mang ngau nhien
+    time_t t;
+    srand((unsigned)time(&t));
+    
+    for (int i = 0; i < 3; i++){
+        int freTable[781] = {}; //tao bang tan so voi tat ca tan so ben trong la 0.
+        for (int j = 0; j < k[i]; j++){
+            initializeArray(arr, n, 0.0, 10.0);
+            sortArray(arr, n, &comps);
+            freTable[comps]++;
+        }
+        printf("k = %d; Mean = ",k[i]);
+        float sum = 0;
+        for (int l = 0; l < 781; l++)
+            sum += (float)l*freTable[l];
+        sum /= k[i];
+        printf("%f\n",sum);
+    }
+    
+}
+
+//Bài 2
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+// Xóa phần tử tại vị trí start
+void deleteArray(int arr[], int *n, int start, int *assignment) {
+    for (int i = start; i < *n - 1; i++) {
+        (*assignment)++;
+        arr[i] = arr[i + 1];
+    }
+    (*n)--;
+}
+
+void sort(int arr[], int n, int *assignment) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                (*assignment) += 3; // swap đếm 3 phép gán
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+// CASE A: duyệt và xóa trực tiếp
+void caseA(int arr[], int *n, int k, int *comps, int *assignment) {
+    *comps = 0;
+    *assignment = 0;
+    int i = 0;
+
+    while (i < *n) {
+        (*comps)++;
+        if (arr[i] >= k) {
+            deleteArray(arr, n, i, assignment);
+        } else {
+            i++;
+        }
+    }
+}
+
+// CASE B: sort rồi xóa 1 lần từ vị trí đầu tiên >= k
+void caseB(int arr[], int *n, int k, int *comps, int *assignment) {
+    *comps = 0;
+    *assignment = 0;
+
+    sort(arr, *n, assignment);
+
+    int pos = -1;
+
+    for (int i = 0; i < *n; i++) {
+        (*comps)++;
+        if (arr[i] >= k) {
+            pos = i;
+            break;
+        }
+    }
+
+    if (pos != -1) {
+        int oldN = *n;
+        for (int i = pos; i < oldN; i++) {
+            deleteArray(arr, n, pos, assignment);
+        }
+    }
+}
+
+int main() {
+    int arr[100];
+    int n = 100;
+    int compsA, compsB, assignA, assignB;
+
+    srand(time(NULL));
+
+    initializeArray(arr, n, 1998, 2023);
+
+    int arrA[100], arrB[100];
+    for (int i = 0; i < n; i++) arrA[i] = arr[i];
+    for (int i = 0; i < n; i++) arrB[i] = arr[i];
+
+    int nA = n, nB = n;
+
+    caseA(arrA, &nA, 2016, &compsA, &assignA);
+    caseB(arrB, &nB, 2016, &compsB, &assignB);
+
+    printf("=== CASE A ===\n");
+    printf("Comparisons: %d\n", compsA);
+    printf("Assignments: %d\n\n", assignA);
+
+    printf("=== CASE B ===\n");
+    printf("Comparisons: %d\n", compsB);
+    printf("Assignments: %d\n\n", assignB);
+
+    return 0;
+}
+
+
+//BÀi 6 - maximum product
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Khởi tạo mảng ngẫu nhiên
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+// Hàm tìm tích lớn nhất + đếm steps
+int maxProduct(int arr[], int n, int *steps_mul, int *steps_assign)
+{
+    *steps_mul = 0;
+    *steps_assign = 0;
+
+    int max = arr[0] * arr[1];
+    (*steps_mul)++; // 1 phép nhân đầu tiên
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+
+            int product = arr[i] * arr[j];
+            (*steps_mul)++;
+
+            if (product > max) {
+                max = product;
+                (*steps_assign)++;
+            }
+        }
+    }
+
+    return max;
+}
+
+int main() {
+    int arr[1000];
+    int n = 4;   // yêu cầu đề bài
+    int steps_mul, steps_assign;
+
+    int k[] = {100, 1000, 10000};
+
+    srand((unsigned)time(NULL));
+
+    // Số assignment tối đa của N = 4 là 5 nên dùng freTable[10] là đủ
+    for (int i = 0; i < 3; i++) {
+
+        int freTable[10] = {0};
+
+        for (int j = 0; j < k[i]; j++) {
+
+            initializeArray(arr, n, 1, 100);
+
+            maxProduct(arr, n, &steps_mul, &steps_assign);
+
+            freTable[steps_assign]++;
+        }
+
+        printf("k = %d; Mean = ", k[i]);
+
+        float sum = 0;
+        for (int l = 0; l < 10; l++)
+            sum += (float)l * freTable[l];
+
+        sum /= k[i];
+
+        printf("%f\n", sum);
+    }
+
+    return 0;
+}
+
+//Bài 7 - Số tăng dần
+
+#include <stdio.h>
+
+// Hàm kiểm tra chữ số tăng dần và đếm số phép so sánh
+int isIncreasing(int n, int *comps)
+{
+    *comps = 0;
+
+    int d4 = n % 10; n /= 10;
+    int d3 = n % 10; n /= 10;
+    int d2 = n % 10; n /= 10;
+    int d1 = n % 10;
+
+    // d1 d2 d3 d4 là 4 chữ số
+
+    (*comps)++;
+    if (d1 > d2) return 0;
+
+    (*comps)++;
+    if (d2 > d3) return 0;
+
+    (*comps)++;
+    if (d3 > d4) return 0;
+
+    return 1;
+}
+
+int main() {
+    int comps;
+    long long totalComps = 0;
+    int count = 0;
+
+    for (int n = 1000; n <= 9999; n++) {
+
+        isIncreasing(n, &comps);
+
+        totalComps += comps;
+        count++;
+    }
+
+    double mean = (double)totalComps / count;
+
+    printf("Tong so so da kiem tra: %d\n", count);
+    printf("Tong so phep so sanh: %lld\n", totalComps);
+    printf("So phep so sanh trung binh: %.6f\n", mean);
+
+    return 0;
+}
+//Bài 8
+#include <stdio.h>
+
+void f(int a[], int n, int *comps, int *shifts, int *assigns) {
+
+    *comps = 0;
+    *shifts = 0;
+    *assigns = 0;
+
+    for (int d = n/2; d > 0; d /= 2) {
+
+        for (int i = d; i < n; i++) {
+
+            int t = a[i];   // không đếm (không liên quan mảng)
+            int j;
+
+            for (j = i; j >= d; j -= d) {
+
+                (*comps)++;    // so sánh a[j-d] > t
+
+                if (a[j-d] > t) {
+                    a[j] = a[j-d];   // SHIFT
+                    (*shifts)++;
+                } else {
+                    break;
+                }
+            }
+
+            a[j] = t;    // ASSIGN (chèn lại t vào mảng)
+            (*assigns)++;
+        }
+    }
+}
+
+int main() {
+
+    int a[] = {34, 29, 10, 3, 2, 44, 88, 1, 21, 12,
+               3, 18, 21, 23, 37, 17, 8, 9, 4, 0};
+
+    int n = 20;
+    int comps, shifts, assigns;
+
+    f(a, n, &comps, &shifts, &assigns);
+
+    printf("So phep so sanh (comps)  = %d\n", comps);
+    printf("So phep shift (a[j]=a[j-d]) = %d\n", shifts);
+    printf("So phep assign (a[j]=t)   = %d\n", assigns);
+
+    return 0;
+}
