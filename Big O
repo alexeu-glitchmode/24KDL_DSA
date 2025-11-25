@@ -391,4 +391,140 @@ int main(){
     
 }
 
+// Ôn tập 2
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++){
+        arr[i] = min + rand()%(max-min+1)/4;
+        min = arr[i];
+    }
+}
+
+void oddLeft(int arr[], int n, int *comps, int *shifts){
+    (*comps) =0;
+    (*shifts) = 0;
+     for(int i=1; i<n; i++){
+          int j = i;
+          (*comps)++;
+          if (arr[j]%2 != 0){
+              int temp = arr[j];
+              while(arr[j-1] %2 == 0 && j>0){
+                  (*shifts)++;
+                  (*comps)++;
+                   arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = temp;
+          }
+     }
+}
+
+int main(){
+    int n = 10, comps, shifts;
+    int arr[100];
+    int k = 10000;
+   //Sinh mang ngau nhien
+    time_t t;
+    srand((unsigned)time(&t));
+    
+   int freqTableShift[30] = {};
+    int freqTableComps[50] = {};
+     for (int j = 0; j < k; j++){
+            initializeArray(arr, n, -100, 100);
+            oddLeft(arr, n, &comps, &shifts);
+            freqTableShift[shifts]++;
+            freqTableComps[comps]++;
+        }
+    printf("\n Shifts     Freq\n");
+    float shift_fre = 0, comps_fre =0;
+    for (int i =0; i<30; i++){
+        printf("%d     %d\n", i, freqTableShift[i]);
+        shift_fre += freqTableShift[i]*i;
+    }
+    printf("\nMean Shift = %.2f", (float) shift_fre/k);
+     printf("\n Comps     Freq\n");
+    for (int i =0; i<50; i++){
+        printf("%d     %d\n", i, freqTableComps[i]);
+        comps_fre += freqTableComps[i]*i;
+    }
+   printf("\nMean Comps = %.2f", (float) comps_fre/k);
+   printf("\nĐộ phức tạp của thuật toán theo Big O: O(n^2)");
+    return 0;
+    
+}
+
+
+// Brute Force
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max){
+    for(int i = 0; i < n; i++){
+        arr[i] = min + rand() % (max - min + 1);
+    }
+}
+
+int maxSubArrayBruteForce(int arr[], int n, long long *comparisons, long long *assignments)
+{
+    *comparisons = *assignments = 0;
+
+    int maxSum = arr[0]; 
+    (*assignments)++;
+
+    for(int i = 0; i < n; i++){
+        int currSum = 0;
+
+        for(int j = i; j < n; j++){
+            currSum += arr[j];
+
+            (*comparisons)++;
+            if(currSum > maxSum){
+                maxSum = currSum;
+                (*assignments)++;
+            }
+        }
+    }
+    return maxSum;
+}
+
+int main(){
+    srand(time(NULL));
+
+    int n = 10;   // độ lớn mảng mỗi lần test
+    int k = 1000; // sẽ thay 100, 1000, 10000 theo yêu cầu
+
+    int arr[100];
+    long long comparisons, assignments;
+
+    long long freqComp[200000] = {0};
+    long long freqAssign[200000] = {0};
+
+    for(int t = 0; t < k; t++){
+        initializeArray(arr, n, -50, 50);
+
+        maxSubArrayBruteForce(arr, n, &comparisons, &assignments);
+
+        if(comparisons < 200000) freqComp[comparisons]++;
+        if(assignments < 200000) freqAssign[assignments]++;
+    }
+
+    printf("\n=== k = %d ===", k);
+    long double sumC = 0, sumA = 0;
+
+    for(int i = 0; i < 200000; i++){
+        sumC += (long double) i * freqComp[i];
+        sumA += (long double) i * freqAssign[i];
+    }
+
+    printf("\nMean comparisons = %Lf", sumC / k);
+    printf("\nMean assignments = %Lf\n", sumA / k);
+
+    printf("\nBig-O time complexity = O(n^3)\n");
+
+    return 0;
+}
+
 
