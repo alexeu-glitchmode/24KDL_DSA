@@ -63,3 +63,222 @@ int main(){
     printf("\nMean shifts: %g", sumShifts/k);
     return 0;
 }
+
+// SELECTION SORT
+void selectionSort(int arr[], int n, int *comps, int *swaps)
+{
+    *comps = 0; *swaps = 0;
+    int tmp, min_idx;
+    for (int i = 0; i < n; i++) {
+        min_idx = i;
+        for (int j = i + 1; j < n; j++) {
+            *comps += 1;
+            if (arr[j] < arr[min_idx]) min_idx = j;
+        }
+        if (min_idx != i) {
+            *swaps += 1;
+            tmp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = tmp;
+        }
+    }
+}
+
+//INSERTION SORT
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++){
+        arr[i] = min + rand()%(max - min + 1);
+    }
+}
+void swap(int *a, int *b){
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+void selectionSort(int arr[], int n, int *comps, int *swaps) {
+  *comps = 0; 
+  *swaps = 0; 
+  for (int i = 0; i < n-1; i++){
+    int min_index = i;
+    for(int j = i + 1; j < n; j++){
+      (*comps)++;
+      if (arr[j] < arr[min_index]){
+        min_index = j;
+      }
+    }
+    if (min_index != i){
+      swap( &arr[i], &arr[min_index]);
+      (*swaps)++;
+    }
+  }
+}
+void insertionSort(int arr[], int n, int *comps, int *shifts){
+    (*comps) = 0;
+    (*shifts) = 0;
+    int i, key, j;
+    for (int i = 1; i < n; i++){
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0){
+            (*comps)++;
+            if ( arr[j] > key){
+              (*shifts)++;
+              arr[j+1] = arr[j];
+            }       
+            else {
+              break;
+            }
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+void sao_chep_mang(int arr1[], int arr2[], int n){
+  for (int i = 0; i < n; i++){
+    arr2[i] = arr1[i];
+  }
+}
+int main()
+{
+  int array[1000];
+  int n = 10;
+  int k[] = {100,1000,10000,100000};
+  int comps_select, comps_insert, shifts, swaps;
+  time_t t;
+  srand((unsigned)time(&t));
+  for (int i = 0; i < 4; i++){
+    int freTableCompsSelect[60] = {};
+    int freTableCompsInsert[60] = {};
+    int freTableSwaps[60] = {};
+    int freTableShifts[60] = {};
+    for (int j = 0; j < k[i]; j++){
+    initializeArray(array, n, -10000, 10000);
+    int array_temp[1000];
+    sao_chep_mang(array, array_temp, n);
+    selectionSort(array, n, &comps_select, &swaps);
+    insertionSort(array_temp, n, &comps_insert, &shifts);
+    freTableCompsSelect[comps_select]++;
+    freTableCompsInsert[comps_insert]++;
+    freTableSwaps[swaps]++;
+    freTableShifts[shifts]++;
+    }
+    printf("Frequency Table k = %d\n", k[i]);
+    float sumCompsSelect = 0.0, sumCompsInsert = 0.0, sumSwaps = 0.0, sumShifts = 0.0;
+    for (int q = 0; q < n*(n+1)/2; q++){
+      sumCompsSelect += q*freTableCompsSelect[q];
+      sumCompsInsert += q*freTableCompsInsert[q]; 
+      sumSwaps += q*freTableSwaps[q];
+      sumShifts += q*freTableShifts[q];
+    }
+    printf("MeanStepSelect: %.2f\n",(sumCompsSelect+sumSwaps)/k[i]);
+    printf("MeanStepInsert: %.2f\n",(sumCompsInsert+sumShifts)/k[i]);
+    printf("Observation\tSwaps\tShifts\n");
+    for (int h = 0; h < n*(n+1)/2; h++){
+      printf("     %d\t\t %d\t  %d\n",h,freTableSwaps[h],freTableShifts[h]);
+    }
+    printf("\n");
+  }
+}
+
+
+// Gộp 2 mảng
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max){
+    // sinh mảng tăng dần có giá trị âm
+    arr[0] = min + rand() % (max - min + 1);
+    for(int i=1; i<n; i++){
+        int step = rand() % 5; // tăng nhẹ để giữ tăng dần
+        arr[i] = arr[i-1] + step;
+    }
+}
+
+void outputArray(int arr[], int n){
+    for(int i=0; i<n; i++){
+        printf("%d ", arr[i]);
+    }
+}
+
+void mergeArrays(int A[], int n, int B[], int m,
+                 int C[], int *comparisons, int *assignments)
+{
+    *comparisons = *assignments = 0;
+
+    int i = 0, j = 0, k = 0;
+
+    while (i < n && j < m){
+        (*comparisons)++;  // so sánh A[i] và B[j]
+        if (A[i] <= B[j]){
+            C[k++] = A[i++];
+            (*assignments)++;
+        } else {
+            C[k++] = B[j++];
+            (*assignments)++;
+        }
+    }
+
+    // copy phần còn lại
+    while (i < n){
+        C[k++] = A[i++];
+        (*assignments)++;
+    }
+    while (j < m){
+        C[k++] = B[j++];
+        (*assignments)++;
+    }
+}
+
+int main(){
+    int n = 50;     // size mảng A
+    int m = 50;     // size mảng B
+    int A[100], B[100], C[200];
+    
+    int k = 1000;   // số lần chạy
+    int comparisons, assignments;
+
+    time_t t;
+    srand((unsigned)time(&t));
+
+    int freqComparisons[500] = {0};
+    int freqAssignments[500] = {0};
+
+    // chạy lặp k lần
+    for (int loop = 0; loop < k; loop++){
+        initializeArray(A, n, -100, 100);
+        initializeArray(B, m, -100, 100);
+
+        mergeArrays(A, n, B, m, C, &comparisons, &assignments);
+
+        if (comparisons < 500) freqComparisons[comparisons]++;
+        if (assignments < 500) freqAssignments[assignments]++;
+    }
+
+    printf("\nk = %d", k);
+    float sumComparisons = 0;
+    float sumAssignments = 0;
+
+    for (int i = 0; i < 500; i++){
+        sumComparisons += i * freqComparisons[i];
+        sumAssignments += i * freqAssignments[i];
+    }
+
+    printf("\n\nFrequency Table:");
+    printf("\nvalue\tcomparisons\tassignments");
+    for (int i = 0; i < 200; i++){
+        if (freqComparisons[i] > 0 || freqAssignments[i] > 0)
+            printf("\n%d\t%d\t\t%d", i, freqComparisons[i], freqAssignments[i]);
+    }
+
+    printf("\n\nMean comparisons: %g", sumComparisons / k);
+    printf("\nMean assignments: %g", sumAssignments / k);
+
+    printf("\nBig-O ≈ O(n + m) = O(k)\n");
+
+    return 0;
+}
