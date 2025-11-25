@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max){
+    for(int i=0; i<n; i++){
+        arr[i] = min + rand() % (max - min + 1)/4;
+        min = arr[i];
+    }
+}
+
+void outputArray(int arr[], int n){
+    for(int i=0; i<n; i++){
+        printf("%d ", arr[i]);
+    }
+}
+
+void leftOdd(int arr[], int n, int *comparisons, int *shifts){
+    (*comparisons) = (*shifts) = 0;
+    int dem = 0;
+    for(int i=0; i<n; i++){
+        (*comparisons)++;
+        if((arr[i]%2) != 0){
+            int gt_le = arr[i];
+            for(int j=i-1; j>=dem; j--){
+                (*shifts)++;
+                arr[j+1] = arr[j];
+            }
+            arr[dem] = gt_le;
+            dem++;
+        }
+    }
+}
+
+int main(){
+    int arr[100];
+    int n = 10;
+    int k = 1000;
+    int comparisons, shifts;
+    time_t t;
+    srand((unsigned)time(&t));
+    int freqComparisons[50] = {};
+    int freqShifts[50] = {};
+    for (int j = 0; j < k; j++){
+        initializeArray(arr, n, -100, 100);
+        leftOdd(arr, n, &comparisons, &shifts);
+        freqComparisons[comparisons]++;
+        freqShifts[shifts]++;
+    }
+    printf("\nk = 1000");
+    float sumComparisons = 0;
+    float sumShifts = 0;
+    for (int l = 0; l < 50; l++){
+        sumComparisons += l*freqComparisons[l];
+        sumShifts += l*freqShifts[l];
+    }
+    printf("\nFrequency Table:");
+    printf("\nObservation\tcomparisons\tshifts");
+    for (int h=0; h<50; h++){
+        printf ("\n%d\t\t%d\t\t%d", h, freqComparisons[h], freqShifts[h]);
+    }
+    printf("\nMean comparisons: %g", sumComparisons/k);
+    printf("\nMean shifts: %g", sumShifts/k);
+    return 0;
+}
