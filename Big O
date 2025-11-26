@@ -527,4 +527,99 @@ int main(){
     return 0;
 }
 
+// In 2 bảng riêng
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+int maxProduct(int arr[], int n, int *steps_multi, int *steps_assign){
+    (*steps_multi) = 0;
+    (*steps_assign) = 0;
+
+    int maxProduct = arr[0] * arr[1];  
+
+    for (int i = 0; i < n - 1; i++){
+        for (int j = i + 1; j < n; j++){
+            (*steps_multi)++;
+            int product = arr[i] * arr[j];
+            if (product > maxProduct){
+                (*steps_assign)++;
+                maxProduct = product;
+            }
+        }
+    }
+    return maxProduct;
+}
+
+int main() {
+    int n = 4, steps_multi, steps_assign;
+    int arr[100];
+    int k = 10000;
+
+    srand(time(NULL));
+
+    // Ý 1: in mảng và số steps
+    initializeArray(arr, n, 1, 1000);
+    printf("Mang ngau nhien: ");
+    for (int i = 0; i < n; i++)
+        printf("%d  ", arr[i]);
+
+    int max = maxProduct(arr, n, &steps_multi, &steps_assign);
+    printf("\nSteps nhân (multi): %d", steps_multi);
+    printf("\nSteps chính xác theo n: n*(n-1)/2");
+    printf("\nTheo Big O: O(n^2)\n");
+
+    // Ý 2: chạy 10.000 lần
+    int freqAssign[10] = {0};
+    int freqMulti[10] = {0};
+
+    for (int j = 0; j < k; j++){
+        initializeArray(arr, n, 1, 1000);
+        maxProduct(arr, n, &steps_multi, &steps_assign);
+
+        if (steps_assign < 10)
+            freqAssign[steps_assign]++;
+
+        if (steps_multi < 10)
+            freqMulti[steps_multi]++;
+    }
+
+    // ================================
+    // BẢNG 1: THỐNG KÊ ASSIGN
+    // ================================
+    printf("\n==============================\n");
+    printf(" BANG TAN SUAT ASSIGN (max=product)\n");
+    printf("==============================\n");
+    printf("Assign   Frequency\n");
+
+    float sum_assign = 0;
+    for (int i = 0; i < 10; i++) {
+        printf("%4d     %6d\n", i, freqAssign[i]);
+        sum_assign += freqAssign[i] * i;
+    }
+    printf("Trung binh Assign = %.3f\n", sum_assign / k);
+
+    // ================================
+    // BẢNG 2: THỐNG KÊ MULTIPLY
+    // ================================
+    printf("\n==============================\n");
+    printf(" BANG TAN SUAT MULTIPLY (arr[i]*arr[j])\n");
+    printf("==============================\n");
+    printf("Multi    Frequency\n");
+
+    float sum_multi = 0;
+    for (int i = 0; i < 10; i++) {
+        printf("%4d     %6d\n", i, freqMulti[i]);
+        sum_multi += freqMulti[i] * i;
+    }
+    printf("Trung binh Multi = %.3f\n", sum_multi / k);
+
+    return 0;
+}
+
 
