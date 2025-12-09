@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+float findNearestNumber(float arr[], int n, int m, int *index){
+    float min = abs(m-arr[0]);
+    float nearest_number = arr[0];
+    for (int i=1; i<n; i++){
+        if (abs(m-arr[i]) < min){
+            min = abs(m-arr[i]);
+            nearest_number = arr[i];
+            (*index) = i;
+        }
+    }
+    return nearest_number;
+}
+
+
+int main() {
+    int n = 6, m=3, index = 0;
+    float arr[] =  {5.2, -3.14, 0.56, 12.98, -7.0, 4.44, 9.01};
+    float nearest_number =findNearestNumber(arr, n, m, &index); 
+    printf("%.2f at index %d nearest to %d", nearest_number, index, m );
+
+    return 0;
+}
+
+//Bài 2
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int findCharIndex(char string[], char ch){
+    for(int i=0; i<strlen(string); i++){
+        if (tolower(string[i]) == tolower(ch)){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main(){
+    char string[1000];
+    char ch;
+    
+    printf("Nhập chuỗi:");
+    fgets(string, sizeof(string), stdin);
+    printf("Nhập kí tự:");
+    scanf("%c", &ch);
+    int find = findCharIndex(string, ch);
+    if (find !=-1){
+        printf("Found %c at %d", ch, find);
+    }
+    else{
+        printf("Not found!");
+    }
+}
+
+//Bài 3
+#include <stdio.h>
+#include <string.h>
+
+// hàm tìm kiếm chuỗi trong mảng serial key
+int search(char arr[][6], int n, char key[]) {
+    for (int i = 0; i < n; i++) {
+        if (strcmp(arr[i], key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int n = 5, k = 6;
+    char serialKey[5][6] = {
+        "ab2c3",
+        "998xyz",
+        "hefl12",
+        "ab1234",
+        "hvthao"
+    };
+
+    char key[100];
+
+    printf("Nhap chuoi can tim: ");
+    fgets(key, sizeof(key), stdin);
+    key[strcspn(key, "\n")] = '\0';  
+    int pos = search(serialKey, n, key);
+    if (pos != -1)
+        printf("Found at %d\n", pos);
+    else
+        printf("Not found!\n");
+
+    return 0;
+}
+
+//Bài 4
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void insertChar(char string[], char ch, int index){
+    if (index < 0 || index >= strlen(string)){
+        return;
+    }
+    int len = strlen(string);
+    len ++;
+   for (int i=len-1; i > index; i--){
+       string[i] = string[i-1];
+   }
+   string[index] = ch;
+}
+
+int main(){
+    char string[1000];
+    char ch;
+    int index;
+    
+    printf("Nhập chuỗi:");
+    fgets(string, sizeof(string), stdin);
+    printf("Nhập kí tự:");
+    scanf("%c", &ch);
+    printf("Nhập vị trí chèn:");
+    scanf("%d", &index);
+    insertChar(string, ch, index);
+    printf("%s", string);
+    
+}
+
+//Bài 5
+#include <stdio.h>
+#include <string.h>
+
+void insertChar(char string[][100], char insert[], int index, int *n, int k){
+    if (index < 0 || index >= *n){
+        return;
+    }
+    if(strlen(insert) !=  k){
+        return;
+    }
+    (*n)++;
+   for (int i=*n-1; i > index; i--){
+       for (int j = 0; j <= k; j++) {   
+            string[i][j] = string[i - 1][j];
+        }
+   }
+   for (int i=0; i<k; i++){
+   string[index][i] = insert[i];
+   }
+      string[index][k] = '\0'; 
+}
+
+int main() {
+    int n = 5, k = 6;
+    int index;
+    char insert[100];
+    char string[100][100] = {
+        "ab2c3",
+        "998xyz",
+        "hefl12",
+        "ab1234",
+        "hvthao"
+    };
+
+    printf("Nhap chuoi can chen: ");
+    fgets(insert, sizeof(insert), stdin);
+    insert[strcspn(insert, "\n")] = '\0';
+    printf("Nhap vi tri can chen:");
+    scanf("%d", &index);
+    insertChar(string, insert, index, &n, k);
+    for (int i=0; i<n; i++){
+        printf("%s\n", string[i]);
+    }
+
+    return 0;
+}
+
