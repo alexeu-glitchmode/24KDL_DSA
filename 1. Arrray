@@ -1,3 +1,4 @@
+// Bài 1
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -19,8 +20,11 @@ float findNearestNumber(float arr[], int n, int m, int *index){
 int main() {
     int n = 6, m=3, index = 0;
     float arr[] =  {5.2, -3.14, 0.56, 12.98, -7.0, 4.44, 9.01};
+    for (int i=0; i<n; i++){
+        printf("%.2f  ",arr[i]);
+    }
     float nearest_number =findNearestNumber(arr, n, m, &index); 
-    printf("%.2f at index %d nearest to %d", nearest_number, index, m );
+    printf("\n %.2f at index %d nearest to %d", nearest_number, index, m );
 
     return 0;
 }
@@ -60,8 +64,7 @@ int main(){
 #include <stdio.h>
 #include <string.h>
 
-// hàm tìm kiếm chuỗi trong mảng serial key
-int search(char arr[][6], int n, char key[]) {
+int search(char arr[][100], int n, char key[]) {
     for (int i = 0; i < n; i++) {
         if (strcmp(arr[i], key) == 0) {
             return i;
@@ -72,8 +75,8 @@ int search(char arr[][6], int n, char key[]) {
 
 int main() {
     int n = 5, k = 6;
-    char serialKey[5][6] = {
-        "ab2c3",
+    char serialKey[5][100] = {
+        "ab2c3d",
         "998xyz",
         "hefl12",
         "ab1234",
@@ -81,7 +84,9 @@ int main() {
     };
 
     char key[100];
-
+    for (int i=0; i<n; i++){
+        printf("%s\n", serialKey[i]);
+    }
     printf("Nhap chuoi can tim: ");
     fgets(key, sizeof(key), stdin);
     key[strcspn(key, "\n")] = '\0';  
@@ -161,7 +166,9 @@ int main() {
         "ab1234",
         "hvthao"
     };
-
+    for(int i=0; i<n; i++){
+        printf("%s\n", string[i]);
+    }
     printf("Nhap chuoi can chen: ");
     fgets(insert, sizeof(insert), stdin);
     insert[strcspn(insert, "\n")] = '\0';
@@ -171,7 +178,40 @@ int main() {
     for (int i=0; i<n; i++){
         printf("%s\n", string[i]);
     }
-
     return 0;
 }
 
+#include <stdio.h>
+
+void insertArray(float arr[], int *n, int m, float value[], int index[]){
+    for(int i=m-1; i>=0; i--){
+        for(int j = (*n); j>index[i]; j--){
+            arr[j] = arr[j-1];
+        }
+        arr[index[i]] = value[i];
+          (*n)++;
+    }
+}
+
+// Bài 6
+int main(){
+    int n = 5, m;
+    float arr[100] = {2.2, -3.0, 19.12, -10.22 ,9.0};
+    float value[100];
+    int index[100];
+    for(int i=0; i<n; i++){
+        printf("%.2f   ", arr[i]);
+    }
+    scanf("%d", &m);
+    for(int i=0; i<m; i++){
+        scanf("%f  %d", &value[i], &index[i]);
+        while(index[i]< 0 || index[i] > m+n){
+            printf("nhập lại:");
+            scanf("%.2f  %d", value[i], index[i]);
+        }
+    }
+    insertArray(arr, &n, m, value, index);
+     for(int i=0; i<n; i++){
+        printf("%.2f   ", arr[i]);
+    }
+}
