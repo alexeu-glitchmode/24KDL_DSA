@@ -60,3 +60,32 @@ B1: Base case: left >= right
 B2: Kết quả Base case: ngừng gọi đệ quy
 B3: Một trường hợp đằng trước Base case: quickSort(arr, )
 
+	#include <stdio.h>
+int tinhTongChan(int arr[], int n, int index){
+    if(index ==n){
+        return 0;
+    }
+    if(arr[index] %2 == 0){
+        return tinhTongChan(arr,n, index+1 )+arr[index];
+    }
+    return tinhTongChan(arr, n, index+1);
+}
+
+//Revise
+int main() {
+    int arr[] = {3, 1, 2, -4, 5, 10, 6, -4, 11, 9, -2};
+    int n = 11;
+    printf("Tong cac phan tu chan trong mang: %d", 
+    tinhTongChan(arr, n, 0));
+    return 0;
+}
+
+/*Phân tích theo quy trình 4 bước
+B1. Base case: index = n. 
+B2. Kết quả Base case: ngừng đệ quy vì đã hết mảng, sum = 0
+B3. Một kết quả trước Base case: 
+    index = 10
+    tinhTongChan(arr, 11, 10) = 10
+B4.Một kết quả trước B3:
+    tinhTongChan(arr, 11, 9) = 14
+    */
