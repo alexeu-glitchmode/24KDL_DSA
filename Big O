@@ -1,3 +1,56 @@
+// Bài 1: Min Index
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray (int arr[], int n, int min, int max) {
+    arr[0] = min + rand() % (max - min + 1);
+    for (int i = 0; i < n - 1; i++) {
+        arr[i + 1] = arr[i] + abs(rand() % (max - arr[i] + 1));
+    }
+}
+
+void insertArray (int arr[], int *n, int value, int index,  int *assignment) {
+    *assignment = 0;
+    if (index < 0 || index >= *n) return;
+    (*n)++;
+    for (int i = *n - 1; i > index; i--) {
+        *assignment += 1;
+        arr[i] = arr[i - 1];
+    }
+    arr[index] = value;
+}
+
+int main() {
+    int arr[1000];
+    int n;
+    int comps;
+    int k[] = {100,1000,10000};
+    //Sinh mang ngau nhien
+    time_t t;
+    srand((unsigned)time(&t));
+
+    for (int i = 0; i < 3; i++){
+        int freTable[21] = {}; //tao bang tan so voi tat ca tan so ben trong la 0.
+        for (int j = 0; j < k[i]; j++){
+            n = 10;
+            initializeArray(arr, n, -1000, 1000);
+            int value = k[i];
+            int index = rand() % (n - 1);
+            insertArray(arr, &n, value, index, &comps);
+            freTable[comps]++;
+        }
+        printf("k = %d; Mean = ",k[i]);
+        float sum = 0;
+        for (int l = 0; l < 21; l++)
+            sum += l*freTable[l];
+        sum /= k[i];
+        printf("%f\n",sum);
+    }
+    return 0;
+}
+
+
 //Bài 2: Students' scores
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +104,80 @@ int main() {
     
 }
 
-//Bài 2
+
+//Bài 3
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Sinh mảng ngẫu nhiên
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+void bubbleSort(int arr[], int n, int *comps) {
+    *comps = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            (*comps)++;         
+            if (arr[j] > arr[j + 1]) {
+                int tmp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[1000];
+    int comps;
+    time_t t;
+    srand((unsigned)time(&t));
+
+    int k[] = {10, 20, 50, 100, 1000, 10000};
+    int n = 20;
+
+    printf("n = 20\n");
+    for (int i = 0; i < 6; i++) {
+        int freTable[1000] = {0};
+
+        for (int j = 0; j < k[i]; j++) {
+            initializeArray(arr, n, -1000, 1000);
+            bubbleSort(arr, n, &comps);
+            freTable[comps]++;
+        }
+
+        float sum = 0;
+        for (int l = 0; l < 1000; l++)
+            sum += l * freTable[l];
+
+        printf("k = %d; Mean comps= %.2f\n",
+               k[i], sum / k[i]);
+    }
+
+   
+    printf("Khao sat theo kich thuoc n, k = 1000\n");
+    int runs = 1000;
+    for (n = 10; n <= 100; n += 10) {
+        int total = 0;
+        for (int i = 0; i < runs; i++) {
+            initializeArray(arr, n, -1000, 1000);
+            bubbleSort(arr, n, &comps);
+            total += comps;
+        }
+        printf("n = %3d; Mean comps = %.2f\n",
+               n, (float)total / runs);
+    }
+    
+    printf("\nVới n=20, k thay đổi: Mean comps không thay đổi. Mean comps = n(n-1)/2");
+    printf("\n Với n thay đổi, k = 1000: Mean comps tăng khi n tăng -> Mean comps phụ thuộc vào n. \nBig O = O(n^2)=");
+    return 0;
+}
+
+
+// Bài 4
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -61,7 +187,7 @@ void initializeArray(int arr[], int n, int min, int max) {
         arr[i] = min + rand() % (max - min + 1);
 }
 
-// Xóa phần tử tại vị trí start
+// Xóa phần tử tại vị trí start (dịch trái)
 void deleteArray(int arr[], int *n, int start, int *assignment) {
     for (int i = start; i < *n - 1; i++) {
         (*assignment)++;
@@ -70,11 +196,12 @@ void deleteArray(int arr[], int *n, int start, int *assignment) {
     (*n)--;
 }
 
-void sort(int arr[], int n, int *assignment) {
+void sort(int arr[], int n, int *comps, int *assignment) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
+            (*comps)++;
             if (arr[i] > arr[j]) {
-                (*assignment) += 3; // swap đếm 3 phép gán
+                (*assignment) += 3; // swap = 3 phép gán
                 int temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
@@ -87,8 +214,8 @@ void sort(int arr[], int n, int *assignment) {
 void caseA(int arr[], int *n, int k, int *comps, int *assignment) {
     *comps = 0;
     *assignment = 0;
-    int i = 0;
 
+    int i = 0;
     while (i < *n) {
         (*comps)++;
         if (arr[i] >= k) {
@@ -99,15 +226,13 @@ void caseA(int arr[], int *n, int k, int *comps, int *assignment) {
     }
 }
 
-// CASE B: sort rồi xóa 1 lần từ vị trí đầu tiên >= k
+// CASE B: sort + xóa một lần bằng cách cắt mảng
 void caseB(int arr[], int *n, int k, int *comps, int *assignment) {
     *comps = 0;
     *assignment = 0;
 
-    sort(arr, *n, assignment);
-
-    int pos = -1;
-
+    sort(arr, *n, comps, assignment);
+    int pos = *n;
     for (int i = 0; i < *n; i++) {
         (*comps)++;
         if (arr[i] >= k) {
@@ -115,32 +240,25 @@ void caseB(int arr[], int *n, int k, int *comps, int *assignment) {
             break;
         }
     }
-
-    if (pos != -1) {
-        int oldN = *n;
-        for (int i = pos; i < oldN; i++) {
-            deleteArray(arr, n, pos, assignment);
-        }
-    }
+    *n = pos;
 }
 
 int main() {
-    int arr[100];
-    int n = 100;
+    int arr[100], arrA[100], arrB[100];
+    int k = 2016, n = 100;
     int compsA, compsB, assignA, assignB;
 
     srand(time(NULL));
 
     initializeArray(arr, n, 1998, 2023);
 
-    int arrA[100], arrB[100];
-    for (int i = 0; i < n; i++) arrA[i] = arr[i];
-    for (int i = 0; i < n; i++) arrB[i] = arr[i];
+    for (int i = 0; i < n; i++) {
+        arrA[i] = arr[i];
+        arrB[i] = arr[i];
+    }
 
-    int nA = n, nB = n;
-
-    caseA(arrA, &nA, 2016, &compsA, &assignA);
-    caseB(arrB, &nB, 2016, &compsB, &assignB);
+    caseA(arrA, &n, k, &compsA, &assignA);
+    caseB(arrB, &n,k, &compsB, &assignB);
 
     printf("=== CASE A ===\n");
     printf("Comparisons: %d\n", compsA);
@@ -150,9 +268,12 @@ int main() {
     printf("Comparisons: %d\n", compsB);
     printf("Assignments: %d\n\n", assignB);
 
+    printf("Nhan xet:\n");
+    printf("CaseA phai xoa va dich mang nhieu lan nen ton nhieu phep gan.\n");
+    printf("CaseB sap xep truoc nhung chi xoa mot lan nen hieu qua hon voi du lieu lon.\n");
+
     return 0;
 }
-
 
 //BÀi 6 - maximum product
 #include <stdio.h>
@@ -289,7 +410,7 @@ void f(int a[], int n, int *comps, int *shifts, int *assigns) {
 
         for (int i = d; i < n; i++) {
 
-            int t = a[i];   // không đếm (không liên quan mảng)
+            int t = a[i];   
             int j;
 
             for (j = i; j >= d; j -= d) {
@@ -304,7 +425,7 @@ void f(int a[], int n, int *comps, int *shifts, int *assigns) {
                 }
             }
 
-            a[j] = t;    // ASSIGN (chèn lại t vào mảng)
+            a[j] = t;   
             (*assigns)++;
         }
     }
