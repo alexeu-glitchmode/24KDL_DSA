@@ -448,6 +448,44 @@ int main() {
     return 0;
 }
 
+
+//Bài 8
+// Online C compiler to run C program online
+#include <stdio.h>
+void f(int a[], int n, int *assignments, int *shifts) {
+  for (int d = n/2; d > 0; d /= 2) {
+    for (int i = d; i < n; i++) {
+      int t = a[i];
+      (*assignments)++;
+      int j;
+      for (j = i; j >=d && a[j-d] > t; j -= d) {
+          (*shifts)++;
+          (*assignments)++;
+        a[j] = a[j-d];
+      }
+      a[j] = t;
+    (*assignments)++;
+    }
+  }
+}
+
+int main() {
+  int a[] = {34, 29, 10, 3, 2, 44, 88, 1, 21, 12, 3, 18, 21, 23, 37, 17, 8, 9, 4, 0};
+  int n = 20;
+  int assignments=0, shifts=0;
+  f(a,n, &assignments, &shifts);
+  printf("Mảng sau sắp xếp:\n");
+  for(int i=0; i<n; i++){
+      printf("%d  ", a[i]);
+  }
+  printf("\nassignmentsignments: %d", assignments);
+  printf("\nShifts: %d", shifts);
+  return 0;
+}
+
+
+
+
 // Ôn tập 2
 #include <stdio.h>
 #include <stdlib.h>
