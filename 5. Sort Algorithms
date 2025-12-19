@@ -92,3 +92,89 @@ int main() {
 
     return 0;
 }
+
+// Bài 2
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+void initializeArray(int arr[], int n, int min, int max){
+    for(int i = 0; i < n; i++){
+        arr[i] = min + (int)((double)rand() / RAND_MAX * (max - min + 1));
+        max = arr[i];
+    }
+}
+
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+void selectionSort(int a[], int n, int *steps){
+  int comps, swaps = 0;
+    for(int i=0; i<n-1; i++){
+        int minIndex = i;
+        for(int j=i+1; j<n; j++){
+            comps++;
+            if(a[j] < a[minIndex]){
+                minIndex = j;
+            }
+        }
+        if(i!=minIndex){
+            swaps++;
+            swap(&a[i], &a[minIndex]);
+        }
+    }
+    (*steps) = comps + swaps;
+}
+
+void insertionSort(int arr[], int n, int *steps){
+    int comps, shifts = 0;
+    int i, key, j;
+    for (int i = 1; i < n; i++){
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0){
+            comps++;
+            if ( arr[j] > key){
+              shifts++;
+              arr[j+1] = arr[j];
+            }       
+            else {
+              break;
+            }
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    (*steps) = comps + shifts;
+}
+
+
+void bubbleSort(int arr[], int n, int *steps){
+    int comps, assignment = 0;
+    for(int i = 0; i<n-1 ; i++){
+        for(int j = 0; j<n-1 - i; j++){
+            (comps)++;
+            if(arr[j] > arr[j+1]){
+                (assignment)++;
+                swap(&arr[j], &arr[j+1]);
+            }
+        }
+    }
+    (*steps) = (comps) + (assignment);
+}
+void printArray(int arr[], int n){
+    for(int i=0; i<n; i++){
+        printf("%d  ", arr[i]);
+    }
+}
+int main() {
+    int n = 10, min = -1000, max = 1000;
+    int arr[100];
+    int steps1, steps2, steps3;
+     time_t t;
+    srand((unsigned)time(&t));
+    initializeArray(arr,n,min,max);
+    printArray(arr, n);
+    return 0;
+}
