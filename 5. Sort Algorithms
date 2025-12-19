@@ -1,0 +1,94 @@
+// Bài 1
+
+// Online C compiler to run C program online
+#include <stdio.h>
+
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+void selectionSort(int a[], int n, int *steps){
+  int comps, swaps = 0;
+    for(int i=0; i<n-1; i++){
+        int minIndex = i;
+        for(int j=i+1; j<n; j++){
+            comps++;
+            if(a[j] < a[minIndex]){
+                minIndex = j;
+            }
+        }
+        if(i!=minIndex){
+            swaps++;
+            swap(&a[i], &a[minIndex]);
+        }
+    }
+    (*steps) = comps + swaps;
+}
+
+void insertionSort(int arr[], int n, int *steps){
+    int comps, shifts = 0;
+    int i, key, j;
+    for (int i = 1; i < n; i++){
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0){
+            comps++;
+            if ( arr[j] > key){
+              shifts++;
+              arr[j+1] = arr[j];
+            }       
+            else {
+              break;
+            }
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    (*steps) = comps + shifts;
+}
+
+
+void bubbleSort(int arr[], int n, int *steps){
+    int comps, assignment = 0;
+    for(int i = 0; i<n-1 ; i++){
+        for(int j = 0; j<n-1 - i; j++){
+            (comps)++;
+            if(arr[j] > arr[j+1]){
+                (assignment)++;
+                swap(&arr[j], &arr[j+1]);
+            }
+        }
+    }
+    (*steps) = (comps) + (assignment);
+}
+void printArray(int arr[], int n){
+    for(int i=0; i<n; i++){
+        printf("%d  ", arr[i]);
+    }
+}
+int main() {
+    int n = 10;
+    int arr1[] = {3, 1, 8, 2, 6, 5, 3, 9, 1, 0};
+    int steps1, steps2, steps3;
+    printf("Mảng gốc: ");
+    printArray(arr1, n);
+    printf("\n Mảng sắp xếp bằng bubble Sort:");
+    bubbleSort(arr1, n,&steps1);
+    printArray(arr1, n);
+    printf("\n Bubble Sort steps =  %d", steps1);
+    
+    int arr2[] = {3, 1, 8, 2, 6, 5, 3, 9, 1, 0};
+    printf("\n Mảng sắp xếp bằng Insertion Sort:");
+    insertionSort(arr2, n, &steps2);
+    printArray(arr2, n);
+    printf("\n Insertion Sort steps =  %d", steps2);
+    
+    int arr3[] = {3, 1, 8, 2, 6, 5, 3, 9, 1, 0};
+    printf("\n Mảng sắp xếp bằng Selection Sort:");
+    selectionSort(arr3, n, &steps3);
+    printArray(arr3, n);
+    printf("\n Selection Sort steps =  %d", steps3);
+
+    return 0;
+}
