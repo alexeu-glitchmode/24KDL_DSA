@@ -1,0 +1,188 @@
+//Bài 2
+
+//Bài 2.1
+#include <stdio.h>
+
+void printArray(int arr[], int n){
+    if(n==0){
+        return;
+    }
+    printf("%d  ", arr[0]);
+    printArray(arr+1, n-1);
+}
+
+int main(){
+    int arr[] = {1,2,3,4,5,6,7,8,9};
+    int n = 9;
+    printArray(arr, n);
+}
+
+//Bài 2.1
+#include <stdio.h>
+
+int linearSearch(int arr[], int n, int value){
+    if (n==0){
+        return -1;
+    }
+    if(arr[0] == value){
+        return 0;
+    }
+    int found = linearSearch(arr+1, n-1, value);
+    if(found == -1){
+        return -1;
+    }
+    else{
+        return found +1;
+    }
+}
+
+int main(){
+    int arr[] = {1,2,3,4,5,6,7,8,9};
+    int n = 9, value =8;
+    printf("Found at Index: %d (-1 means not found)", linearSearch(arr, n, value));
+}
+
+
+//Bài 2
+// Bài 2.3a
+#include <stdio.h>
+#define MAX 20
+
+typedef struct {
+    int a[MAX];
+    int top;
+} Stack;
+
+
+void init(Stack *s){
+    s->top = -1;
+}
+
+int isEmpty(Stack* s){
+    return s->top == -1;
+}
+
+int isFull(Stack* s){
+    return s->top == MAX - 1;
+}
+
+void push(Stack* s, int value){
+    s->top++;
+    s->a[s->top] = value;
+}
+
+int pop(Stack* s){
+    int data = s->a[s->top];
+    s->top--;
+    return data;
+}
+
+void recursionStack(Stack *s){
+    if(isEmpty(s)){
+        return;
+    }
+    printf("Pop: %d\n", pop(s));
+    recursionStack(s);
+}
+
+int main(){
+Stack s;
+init(&s);
+ int arr[20] = {5, 12, -3, 7, 9, 0, 21, -8, 14, 6,
+                   11, 4, -2, 18, 1, 10, -5, 13, 8, 16};
+
+    for(int i = 0; i < 20; i++){
+        push(&s, arr[i]);
+    }
+    recursionStack(&s);
+
+    return 0;
+}
+
+//Bài 2.3b
+// Bài 2.3b
+#include <stdio.h>
+#define MAX 20
+
+typedef struct {
+    int head, tail;
+    int a[MAX];
+} Queue;
+
+void init(Queue* q) {
+    q->head = 0;
+    q->tail = -1;
+}
+
+int isEmpty(Queue *q){
+    if(q->head == -1 || q->head == q->tail + 1)
+        return 1;
+    return 0;
+}
+
+int isFull(Queue *q){
+    if (q->tail == MAX - 1)
+        return 1;
+    return 0;
+}
+void put(Queue* q, int value){
+    q->tail++;
+    q->a[q->tail] = value;
+}
+int get(Queue* q){
+    int data = q->a[q->head];
+    q->head++;
+    return data;
+}
+void recursionQueue(Queue *q){
+    if(isEmpty(q)){
+        return;
+    }
+    printf("Pop: %d\n", get(q));
+    recursionQueue(q);
+}
+
+int main(){
+Queue q;
+init(&q);
+ int arr[20] = {5, 12, -3, 7, 9, 0, 21, -8, 14, 6,
+                   11, 4, -2, 18, 1, 10, -5, 13, 8, 16};
+
+    for(int i = 0; i < 20; i++){
+        put(&q, arr[i]);
+    }
+    recursionQueue(&q);
+
+    return 0;
+}
+
+//Bài 2.4
+#include  <stdio.h>
+
+int binarySearch(int arr[], int value, int low, int high)
+{
+    if (high <= low)
+        return (value > arr[low]) ? (low + 1) : low;
+
+    int mid = (low + high) / 2;
+
+    if (value == arr[mid])
+        return mid;
+
+    if (value > arr[mid])
+        return binarySearch(arr, value, mid + 1, high);
+    return binarySearch(arr, value, low, mid - 1);
+}
+
+int main(){
+    int arr[] = { 37, 23, 0, 17, 12, 72, 31, 46, 100, 88, 54 };
+    int n = 11, value=72;
+    for(int i=0; i<n; i++){
+        printf("%d  ", arr[i]);
+    }
+    printf("\n%d  ", value);
+   int index = binarySearch(arr, value, 0, n-1);
+    
+    printf("\nFound %d at %d",value, index );
+    return 0;
+}
