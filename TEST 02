@@ -30,3 +30,281 @@ B2: Ket qua cua base case 1/(1-1+1) = 1/1 = 1
 B3: Mot truong hop dang truoc base case: sum(2)=sum(1)+1/(2-1 +2)= 1+ 1/3 = 1.33
 B4: Mot truong hop nam truoc B3: sum(3)=sum(2)+1/(3-1 + 3)=1.33 + 1.5 = 1.53
 */
+
+
+// Online C compiler to run C program online
+#include <stdio.h>
+
+int sum(int n){
+    if (n==0){
+        return 0;
+    }
+    else if(n==1){
+        return 2;
+    }
+    else{
+        return sum(n-1) + (n+1)*(n);
+    }
+}
+
+int sumThuong(int n){
+    int sum=0;
+    for(int i=1; i<=n; i++){
+        sum+= i*(i+1);
+    }
+    return sum;
+}
+
+int main() {
+  printf("Tổng là: %d", sum(100));
+printf("Tổng là: %d", sumThuong(100));
+    return 0;
+}
+
+/*Phan tich ham sum theo quy trinh 4 buoc:
+B1: base case: n=0
+B2: Ket qua cua base case 0(0+1) = 0
+B3: Mot truong hop dang truoc base case: sum(1)=sum(0)+1(1+1)= 0 + 1*2 = 2
+B4: Mot truong hop nam truoc B3: sum(3)=sum(2)+1/(3-1 + 3)=1.33 + 1.5 = 1.53
+*/
+
+#include <stdio.h>
+
+int tinhTong2DArray(int m, int n, int arr[100][100]){
+    if(m <0){
+        return 0;
+    }
+   else if(n<0){
+       return tinhTong2DArray(m-1,1, arr );
+   }
+   else{
+       return tinhTong2DArray(m, n-1, arr) + arr[m][n];
+   }
+}
+
+
+int main(){
+    int arr[100][100] = {{1, 2},
+        {3, 4},
+        {5, 6}};
+    printf("Tổng ma trận: %d",tinhTong2DArray(2,1,arr) );
+}
+
+/* Phân tích hàm tinhTong2DArray theo quy trình 4 bước:
+
+B1: Base case:
+    - Khi m < 0 → không còn hàng nào để duyệt
+
+B2: Kết quả của base case:
+    - Trả về 0 vì không còn phần tử nào trong ma trận
+
+B3: Trường hợp đệ quy gần base case:
+    - Khi n < 0:
+        + Đã duyệt hết các cột của hàng m
+        + Chuyển sang hàng m-1, cột cuối
+
+B4: Trường hợp tổng quát:
+    - Tổng tại (m, n) =
+      arr[m][n] + tinhTong2DArray(m, n-1)
+
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int a[], int n, int min, int max){
+    for(int i = 0; i < n; i++)
+        a[i] = min + rand() % (max - min + 1);
+}
+
+void insertArray(int a[], int *n, int value, int index, int *assigns) {
+    if (*n <= index) {
+        a[index] = value;
+        (*assigns)++;
+        (*n)++;
+        return;
+    }
+
+    a[*n] = a[*n - 1];
+    (*assigns)++;
+
+    (*n)--;
+    insertArray(a, n, value, index, assigns);
+}
+
+int main() {
+    int arr[1000];
+    int n;
+    int comps;
+    int k[] = {100, 1000, 10000};
+
+    time_t t;
+    srand((unsigned)time(&t));
+
+    for (int i = 0; i < 3; i++){
+        int freTable[21] = {};
+
+        for (int j = 0; j < k[i]; j++){
+            n = 10;
+            comps = 0;
+            initializeArray(arr, n, -1000, 1000);
+
+            int value = rand();
+            int index = rand() % (n + 1);
+
+            insertArray(arr, &n, value, index, &comps);
+            freTable[comps]++;
+        }
+
+        float sum = 0;
+        for (int l = 0; l < 21; l++)
+            sum += l * freTable[l];
+
+        sum /= k[i];
+        printf("k = %d; Mean = %.2f\n", k[i], sum);
+    }
+
+    return 0;
+}
+/* Phân tích hàm insertArray() theo quy trình 4 bước:
+
+B1: Base case:
+    - Khi n <= index
+
+B2: Kết quả của base case:
+    - Gán giá trị value vào vị trí index của mảng:
+      a[index] = value
+    - Kết thúc đệ quy
+
+B3: Trường hợp ngay trước base case:
+    - Khi n = index + 1
+    - Phần tử tại a[index+1] được gán bằng a[index]
+    - Sau đó gọi insertArray(a, index, value, index)
+
+B4: Trường hợp tổng quát:
+    - Dời phần tử a[n-1] sang vị trí a[n]
+    - Gọi đệ quy để tiếp tục dời các phần tử phía trước:
+      insertArray(a, n-1, value, index)
+
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int sumArray(int a[], int left, int right, int *calls) {
+ if (left <= right) {
+ int midle = (left + right) / 2;
+ (*calls)++;
+ return a[midle] + sumArray(a, left, midle-1, calls)
+ + sumArray(a, midle+1, right, calls);
+ } else {
+ return 0;
+ }
+}
+int main() {
+ int a[] = {1, 2, 3, 4, 5}, calls=0;
+ int sum = sumArray(a, 0, 4, &calls);
+ printf("Sum = %d\n", sum);
+ printf("Số phép gọi: %d", calls);
+ return 0;
+}
+
+
+/* Phân tích hàm sumArray() theo quy trình 4 bước:
+
+B1: Base case:
+    - Khi left > right
+    - Đoạn mảng rỗng, không còn phần tử để tính
+
+B2: Kết quả của base case:
+    - Trả về 0 vì tổng của đoạn rỗng bằng 0
+
+B3: Trường hợp ngay trước base case:
+    - Khi left == right
+    - Đoạn mảng chỉ còn đúng 1 phần tử
+    - midle = left = right
+    - Hàm trả về:
+      a[midle] + 0 + 0 = a[left]
+
+B4: Trường hợp tổng quát:
+    - Khi left < right
+    - Chia đoạn [left, right] thành 2 đoạn con:
+        + [left, midle - 1]
+        + [midle + 1, right]
+    - Tổng bằng phần tử giữa cộng với tổng hai đoạn con
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+int countInverse(int a[], int n, int *comps) {
+    if (n == 1)
+        return 0;
+
+    (*comps)++;   // mỗi lần gọi đều có 1 phép so sánh
+
+    if (a[n-1] < a[n-2])
+        return 1 + countInverse(a, n-1, comps);
+    else
+        return countInverse(a, n-1, comps);
+}
+
+
+int main() {
+    int arr[1000];
+    int n = 10;
+    int counts;
+    int k= 10000;
+    //Sinh mang ngau nhien
+    time_t t;
+    srand((unsigned)time(&t));
+    
+        int freTable[20] = {}; //tao bang tan so voi tat ca tan so ben trong la 0.
+        for (int j = 0; j <k; j++){
+            int comps = 0;
+            initializeArray(arr, n, 0, 10);
+            countInverse(arr, n, &comps);
+            freTable[comps]++;
+        }
+        printf("k = %d; Mean = ",k);
+        float sum = 0;
+        for (int l = 0; l < 20; l++)
+            sum += (float)l*freTable[l];
+        sum /= k;
+        printf("%f\n",sum);
+    
+}
+
+
+/*Phan tich ham sum theo quy trinh 4 buoc:
+B1: base case: n=1
+B2: Ket qua cua base case: Mảng chỉ có 1 phần tử, không có số nào khác để so sánh nên không có số nghịch thế, đếm là 0
+B3: Mot truong hop dang truoc base case: n=2; nếu đúng thì counts=1, sai thì counts=0
+B4: Mot truong hop nam truoc B3: sum(3)=sum(2)+1/(3-1 + 3)=1.33 + 1.5 = 1.53
+*/
+
+#include <stdio.h>
+
+int tinhValue(int n){
+    if(n==0){
+        return 0;
+    }
+    if(n==1){
+        return 1;
+    }
+    else{
+        return tinhValue(n-1) + n;
+    }
+}
+int main(){
+    int n=10;
+    printf("n:%d", tinhValue(n));
+}
