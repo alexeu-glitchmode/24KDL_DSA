@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+float tinhTongPS(int n){
+    // 1/((n-1)+n) = 1/(2*n-1)
+    if(n == 1){
+        return 1;
+    }
+    else{
+        return  tinhTongPS(n-1) + 1.0/(2*n-1); 
+    }
+}
+
+float Sum(int n){
+    float sum = 1.0;
+      for(int i = 2; i <= n; i++){
+        sum += 1.0/(2*i - 1); // 1/((i-1)+i)
+    }
+    return sum;
+}
+int main(){
+    int n=10;
+    float result;
+    printf("Tổng: %.2f", tinhTongPS(n));
+    printf("\nTổng: %.2f", Sum(n));
+}
+
+/*Phan tich ham sum theo quy trinh 4 buoc:
+B1: base case: n=1
+B2: Ket qua cua base case 1/(1-1+1) = 1/1 = 1
+B3: Mot truong hop dang truoc base case: sum(2)=sum(1)+1/(2-1 +2)= 1+ 1/3 = 1.33
+B4: Mot truong hop nam truoc B3: sum(3)=sum(2)+1/(3-1 + 3)=1.33 + 1.5 = 1.53
+*/
