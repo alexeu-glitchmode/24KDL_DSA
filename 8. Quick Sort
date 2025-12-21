@@ -1,0 +1,89 @@
+//Bài 1
+#include <stdio.h>
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+
+void swap(int *x, int *y) {
+
+    int temp = *x;
+
+    *x = *y;
+
+    *y = temp;
+
+}
+
+
+void printSubArray(int arr[], int left, int right) {
+
+    for (int i = left; i <= right; i++) {
+
+        printf("%d ", arr[i]);
+
+    }
+
+    printf("\n");
+
+}
+
+
+int partition(int arr[], int left, int right) {
+    int pivot = arr[right];
+    int i = left - 1;
+
+    for (int j = left; j < right; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[right]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int n, int left, int right, int *counts) {
+    if (left < right) {
+        (*counts)++;
+
+        int pivot = partition(arr, left, right);
+        quickSort(arr, n, left, pivot - 1, counts);
+        quickSort(arr, n, pivot + 1, right,counts);
+
+    } else return;
+
+}
+int main() {
+    int arr[1000];
+    int n = 10;
+    int counts;
+    int k[] = {10, 100,1000,10000};
+    //Sinh mang ngau nhien
+    time_t t;
+    srand((unsigned)time(&t));
+    
+    for (int i = 0; i < 4; i++){
+        int freTable[20] = {}; //tao bang tan so voi tat ca tan so ben trong la 0.
+        for (int j = 0; j < k[i]; j++){
+            int counts = 0;
+            initializeArray(arr, n, 0, 10);
+            quickSort(arr, n, 0, n-1, &counts);
+            freTable[counts]++;
+        }
+        printf("k = %d; Mean = ",k[i]);
+        float sum = 0;
+        for (int l = 0; l < 20; l++)
+            sum += (float)l*freTable[l];
+        sum /= k[i];
+        printf("%f\n",sum);
+    }
+    
+}
