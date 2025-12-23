@@ -172,3 +172,98 @@ int main() {
 
     return 0;
 }
+
+
+
+//Bài 2
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void initializeArray(int arr[], int n, int min, int max) {
+    for (int i = 0; i < n; i++)
+        arr[i] = min + rand() % (max - min + 1);
+}
+
+void deletetion(int arr[], int *n, int pos) {
+    for (int i = pos; i < *n - 1; i++)
+        arr[i] = arr[i + 1];
+    (*n)--;
+}
+
+void removeLinearSearch(int arr[], int *n, int *steps) {
+    *steps = 0;
+    for (int i = 0; i < *n; i++) {
+        for (int j = i + 1; j < *n; j++) {
+            (*steps)++;              
+            if (arr[i] == arr[j]) {
+                deletion(arr, n, j);
+                j--;
+            }
+        }
+    }
+}
+
+void bubbleSort(int arr[], int n, int *steps) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++) {
+            (*steps)++;              
+            if (arr[j] > arr[j + 1]) {
+                int tmp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+        }
+}
+
+void removeBubbleSort(int arr[], int *n) {
+    for (int i = 0; i < *n - 1; i++) {
+        if (arr[i] == arr[i + 1]) {
+            deletion(arr, n, i + 1);
+            i--;
+        }
+    }
+}
+
+int main() {
+    int arr1[1000], arr2[1000];
+    int n = 10;
+    int k[] = {100, 1000, 10000};
+
+    srand((unsigned)time(NULL));
+
+    for (int t = 0; t < 3; t++) {
+        int fre1[1000] = {0};
+        int fre2[1000] = {0};
+
+        for (int i = 0; i < k[t]; i++) {
+            int n1 = n, n2 = n;
+            int steps1 = 0, steps2 = 0;
+
+            initializeArray(arr1, n, -10,10);
+            for (int j = 0; j < n; j++) arr2[j] = arr1[j];
+
+            removeLinearSearch(arr1, &n1, &steps1);
+            bubbleSort(arr2, n2, &steps2);
+            removeBubbleSort(arr2, &n2);
+
+            fre1[steps1]++;
+            fre2[steps2]++;
+        }
+
+        float mean1 = 0, mean2 = 0;
+        for (int i = 0; i < 1000; i++) {
+            mean1 += i * fre1[i];
+            mean2 += i * fre2[i];
+        }
+        mean1 /= k[t];
+        mean2 /= k[t];
+
+        printf("k = %d\n", k[t]);
+        printf("PA1 (LinearSearch): Mean steps = %.2f\n", mean1);
+        printf("PA2 (BubbleSort)  : Mean steps = %.2f\n\n", mean2);
+    }
+
+    return 0;
+}
