@@ -1,0 +1,192 @@
+// CHÈN, IN, XÓA LINKED LIST = ĐỆ QUY
+
+
+//Practice 1
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType {
+    int data;
+    struct NodeType* next; 
+} Node;
+
+typedef struct LinkedListType {
+    Node* head;
+} LinkedList;
+
+void init(LinkedList* list)
+{
+    list->head = NULL;
+}
+
+
+Node* makeNode(int data)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertHead(int data, LinkedList* list)
+{
+    Node* newNode = makeNode(data);
+    newNode->next = list->head;
+    list->head = newNode; // check?
+    
+}
+
+//Hàm in linked list
+void printList(LinkedList* list){
+    Node* node = list->head;
+    while (node != NULL) {
+        printf("Node address: %p | ", &(node->data));
+        printf("data = %d| ", node->data);
+        printf("next node address = %p\n ", node->next);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+
+//Hàm xóa phần tử đầu khỏi linked list
+void deleteHead(LinkedList* list){
+    if(list -> head == NULL){
+        printf("Cannot remove head\n");
+        return;
+    }
+    else{
+   Node*  node_remove = list -> head;
+   list -> head = node_remove -> next;
+   free(node_remove);
+    }
+} 
+
+//Hàm main
+int main(){
+    int data = 15;
+    LinkedList list;
+    init(&list);
+    //Tạo danh sách tự động
+    for(int i = 0; i < 10; i++){
+       insertHead(i, &list); 
+    }
+    //In danh sách
+    
+    printList(&list);
+    printf("\n");
+    
+    insertHead(15, &list);
+    printList(&list);
+    printf("\n");
+     
+    deleteHead(&list);
+    printList(&list);
+    return 0;
+}
+
+
+//Practice 2
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType {
+    int data;
+    struct NodeType* next; 
+} Node;
+
+typedef struct LinkedListType {
+    Node* head;
+} LinkedList;
+
+void init(LinkedList* list)
+{
+    list->head = NULL;
+}
+
+
+Node* makeNode(int data)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertHead(int data, LinkedList* list)
+{
+    Node* newNode = makeNode(data);
+    newNode->next = list->head;
+    list->head = newNode; // check?
+}
+
+//Hàm chèn vào cuối danh sách
+void insertTail(int data, LinkedList* list){
+    Node* newNode = makeNode(data);
+    Node *temp = list -> head;
+    if(list -> head == NULL){
+        temp = newNode;
+        return;
+    }
+    while(temp->next != NULL){
+        temp = temp -> next;
+    }
+    temp -> next = newNode;
+}
+//Hàm in linked list
+void printList(LinkedList* list){
+    Node* node = list->head;
+    while (node != NULL) {
+        printf("Node address: %p | ", &(node->data));
+        printf("data = %d| ", node->data);
+        printf("next node address = %p\n ", node->next);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+
+void deleteHead(LinkedList* list){
+    if(list -> head == NULL){
+        printf("Cannot remove head\n");
+        return;
+    }
+    else{
+   Node*  node_remove = list -> head;
+   list -> head = node_remove -> next;
+   free(node_remove);
+    }
+} 
+
+void deleteTail(LinkedList* list){
+     Node* node = list->head;
+    while (node != NULL) {
+        printf("Node address: %p | ", &(node->data));
+        printf("data = %d| ", node->data);
+        printf("next node address = %p\n", node->next);
+        node = node->next;
+    }
+    printf("\n");
+}
+//Hàm main
+int main(){
+    int arr[] = {2,12,9,0,11,3, 4,8};
+    LinkedList list;
+    init(&list);
+    //Tạo danh sách tự động
+    for(int i = 0; i < 7; i++){
+       insertHead(arr[i], &list); 
+    }
+    printList(&list);
+    
+    insertHead(19, &list);
+    printList(&list);
+    
+    insertTail(-3, &list);
+    printList(&list);
+    deleteHead(&list);
+    printList(&list);
+    deleteTail(&list);
+    printList(&list);
+    return 0;
+}
