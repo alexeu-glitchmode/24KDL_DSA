@@ -519,3 +519,93 @@ int main(){
     return 0;
 }
 
+
+// Bài 6
+// Bài 6: WIFI Access Control
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+
+// Cấu trúc thiết bị
+typedef struct {
+    char deviceID[50];
+    char role[20];   // "staff", "guest", "admin"
+    int auth;        // 1 = hợp lệ, 0 = không hợp lệ
+} Device;
+
+// Stack quản lý thiết bị kết nối vào 1 Access Point
+typedef struct {
+    Device a[MAX];
+    int top;
+} Stack;
+
+void init(Stack *s){
+    s->top = -1;
+}
+
+int isEmpty(Stack* s){
+    return s->top == -1;
+}
+
+int isFull(Stack* s){
+    return s->top == MAX - 1;
+}
+
+void push(Stack* s, Device d){
+    if(!isFull(s)){
+        s->top++;
+        s->a[s->top] = d;
+    }
+}
+
+Device pop(Stack* s){
+    Device d = {"","",0};
+    if(!isEmpty(s)){
+        d = s->a[s->top];
+        s->top--;
+    }
+    return d;
+}
+
+// Kiểm tra quyền truy cập
+int checkAccess(Device d){
+    if(d.auth == 0) return 0; // chưa xác thực
+    if(strcmp(d.role, "guest") == 0) return 0; // khách bị chặn
+    return 1; // staff, admin hợp lệ
+}
+
+int main(){
+    Stack ap; // mô phỏng 1 Access Point
+    init(&ap);
+
+    int N;
+    printf("Nhap so thiet bi muon ket noi: ");
+    scanf("%d", &N);
+
+    for(int i = 0; i < N; i++){
+        Device d;
+        printf("Nhap deviceID: ");
+        scanf("%s", d.deviceID);
+        printf("Nhap role (staff/guest/admin): ");
+        scanf("%s", d.role);
+        printf("Nhap trang thai xac thuc (1=OK,0=Fail): ");
+        scanf("%d", &d.auth);
+
+        if(checkAccess(d)){
+            push(&ap, d);
+            printf(">> Thiet bi %s duoc ket noi vao AP\n", d.deviceID);
+        } else {
+            printf(">> Thiet bi %s bi chan ket noi!\n", d.deviceID);
+        }
+    }
+
+    printf("\nDanh sach thiet bi ket noi hop le:\n");
+    while(!isEmpty(&ap)){
+        Device d = pop(&ap);
+        printf("DeviceID: %s | Role: %s\n", d.deviceID, d.role);
+    }
+
+    return 0;
+}
+
