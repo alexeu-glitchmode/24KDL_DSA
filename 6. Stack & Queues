@@ -177,6 +177,161 @@ int main(){
     return 0;
 }
 
+// Bai 3: Infix -> Postfix va tinh gia tri (chi so 1 chu so, + - * /, khong dau ngoac)
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 1000
+
+// ===== Stack cho toan tu (char) =====
+typedef struct {
+    char a[MAX];
+    int top;
+} StackChar;
+
+void initChar(StackChar *s){
+    s->top = -1;
+}
+
+int isEmptyChar(StackChar *s){
+    return s->top == -1;
+}
+
+int isFullChar(StackChar *s){
+    return s->top == MAX - 1;
+}
+
+void pushChar(StackChar *s, char value){
+    if(isFullChar(s)) return;
+    s->top++;
+    s->a[s->top] = value;
+}
+
+char popChar(StackChar *s){
+    char data = s->a[s->top];
+    s->top--;
+    return data;
+}
+
+char peekChar(StackChar *s){
+    return s->a[s->top];
+}
+
+// ===== Stack cho so (int) =====
+typedef struct {
+    int a[MAX];
+    int top;
+} StackInt;
+
+void initInt(StackInt *s){
+    s->top = -1;
+}
+
+int isEmptyInt(StackInt *s){
+    return s->top == -1;
+}
+
+int isFullInt(StackInt *s){
+    return s->top == MAX - 1;
+}
+
+void pushInt(StackInt *s, int value){
+    if(isFullInt(s)) return;
+    s->top++;
+    s->a[s->top] = value;
+}
+
+int popInt(StackInt *s){
+    int data = s->a[s->top];
+    s->top--;
+    return data;
+}
+
+// ===== Ham uu tien toan tu =====
+int priority(char op){
+    if(op == '*' || op == '/') return 2;
+    if(op == '+' || op == '-') return 1;
+    return 0;
+}
+
+// ===== Chuyen Infix -> Postfix =====
+void infixToPostfix(char infix[], char postfix[]){
+    StackChar s;
+    initChar(&s);
+
+    int j = 0;
+    for(int i = 0; infix[i] != '\0'; i++){
+        char c = infix[i];
+        if(c == ' ' || c == '\t') continue;
+
+        if(isdigit((unsigned char)c)){
+            postfix[j++] = c; // so 1 chu so
+        } else if(c == '+' || c == '-' || c == '*' || c == '/'){
+            while(!isEmptyChar(&s) && priority(peekChar(&s)) >= priority(c)){
+                postfix[j++] = popChar(&s);
+            }
+            pushChar(&s, c);
+        }
+    }
+
+    while(!isEmptyChar(&s)){
+        postfix[j++] = popChar(&s);
+    }
+    postfix[j] = '\0';
+}
+
+// ===== Tinh gia tri Postfix =====
+int evalPostfix(char postfix[], int *ok){
+    StackInt s;
+    initInt(&s);
+    *ok = 1;
+
+    for(int i = 0; postfix[i] != '\0'; i++){
+        char c = postfix[i];
+
+        if(isdigit((unsigned char)c)){
+            pushInt(&s, c - '0');
+        } else {
+            if(s.top < 1){ *ok = 0; return 0; }
+            int b = popInt(&s);
+            int a = popInt(&s);
+
+            if(c == '+') pushInt(&s, a + b);
+            else if(c == '-') pushInt(&s, a - b);
+            else if(c == '*') pushInt(&s, a * b);
+            else if(c == '/'){
+                if(b == 0){ *ok = 0; return 0; }
+                pushInt(&s, a / b); // chia nguyen
+            } else {
+                *ok = 0; return 0;
+            }
+        }
+    }
+
+    if(s.top != 0){ *ok = 0; return 0; }
+    return popInt(&s);
+}
+
+int main(){
+    char infix[MAX], postfix[MAX];
+
+    printf("Nhap bieu thuc: ");
+    fgets(infix, MAX, stdin);
+    infix[strcspn(infix, "\n")] = '\0';
+
+    infixToPostfix(infix, postfix);
+
+    int ok;
+    int result = evalPostfix(postfix, &ok);
+
+    printf("%s\n", postfix);
+    if(ok) printf("Result = %d\n", result);
+    else   printf("Result = ERROR\n");
+
+    return 0;
+}
+
 
 //Bài 4
 #include <stdio.h>
@@ -272,6 +427,94 @@ int main() {
     put(&q, 105);
     displayQueue(&q);
     printf("\n");
+
+    return 0;
+}
+
+
+
+// Bài 5
+// Bài 5: Cross the bridge
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 1000
+
+typedef struct {
+    int a[MAX];
+    int front;
+    int rear;
+    int size;
+} Queue;
+
+void init(Queue *q){
+    q->front = 0;
+    q->rear = -1;
+    q->size = 0;
+}
+
+int isEmpty(Queue *q){
+    return q->size == 0;
+}
+
+int isFull(Queue *q, int K){
+    return q->size == K;
+}
+
+void enqueue(Queue *q, int value){
+    if(q->size < MAX){
+        q->rear = (q->rear + 1) % MAX;
+        q->a[q->rear] = value;
+        q->size++;
+    }
+}
+
+int dequeue(Queue *q){
+    if(q->size > 0){
+        int val = q->a[q->front];
+        q->front = (q->front + 1) % MAX;
+        q->size--;
+        return val;
+    }
+    return -1;
+}
+
+// Hàm so sánh để sắp xếp tăng dần
+int cmp(const void *a, const void *b){
+    return (*(int*)a - *(int*)b);
+}
+
+int main(){
+    int K, N;
+    int times[MAX];
+
+    printf("Nhap tai trong cau K: ");
+    scanf("%d", &K);
+    printf("Nhap so nguoi N: ");
+    scanf("%d", &N);
+
+    printf("Nhap thoi gian tung nguoi: ");
+    for(int i = 0; i < N; i++){
+        scanf("%d", &times[i]);
+    }
+
+    // Sắp xếp thời gian tăng dần
+    qsort(times, N, sizeof(int), cmp);
+
+    Queue q;
+    init(&q);
+
+    int total = 0;
+    for(int i = 0; i < N; i++){
+        if(isFull(&q, K)){
+            int removed = dequeue(&q);
+            total -= removed;
+        }
+        enqueue(&q, times[i]);
+        total += times[i];
+    }
+
+    printf("Tong thoi gian toi thieu = %d\n", total);
 
     return 0;
 }
