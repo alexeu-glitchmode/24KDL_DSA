@@ -1,3 +1,104 @@
+
+// Bài 1
+#include <stdio.h>
+
+/* Phân tích hàm f theo quy trình 4 bước:
+B1: Base case: n = 1.
+B2: Kết quả của Base case: f(1) = 1.
+B3: Một trường hợp ngay trước Base case  
+f(2) = f(1) * 2 = 1 * 2 = 2.
+B4: Một trường hợp nằm trước B3  
+f(3) = f(2) * 2 = 2 * 2 = 4.
+*/
+
+// Cài đặt không đệ quy
+int f(int n) {
+    int result = 1;
+    for (int i = 2; i <= n; i++) {
+        result *= 2;
+    }
+    return result;
+}
+/*Phân tích hàm g theo quy trình 4 bước
+B1: Base case: n = 1.
+B2: Kết quả của Base case  
+g(1) = 1.0.
+B3: Một trường hợp ngay trước Base case  
+g(2) = 2*2 + g(1) = 4 + 1 = 5.
+B4: Một trường hợp nằm trước B3  
+g(3) = 3*3 + g(2) = 9 + 5 = 14.
+*/
+
+// Cài đặt không đệ quy
+
+float g(int n) {
+    float result = 0;
+    for (int i = 1; i <= n; i++) {
+        result += i * i;
+    }
+    return result;
+}
+
+
+/* Phân tích hàm F theo quy trình 4 bước
+B1: Base cases 
+n = 0
+n = 1
+n = 2
+B2: Kết quả của Base cases  
+P(0) = 1
+P(1) = 2
+P(2) = 3
+B3: Một trường hợp ngay trước Base case  
+P(3) = P(2) * P(0) = 3 * 1 = 3.
+
+B4: Một trường hợp nằm trước B3  
+P(4) = P(3) * P(1) = 3 * 2 = 6. */
+
+int P(int n) {
+    int arr[100]; 
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 3;
+    for (int i = 3; i <= n; i++) {
+        arr[i] = arr[i-1] * arr[i-3];
+    }
+    return arr[n];
+}
+
+
+/* Phân tích hàm F theo quy trình 4 bước
+B1: Base cases  
+n = 1
+n = 2
+B2: Kết quả của Base cases  
+F(1) = 1
+F(2) = 1.
+B3: Một trường hợp ngay trước Base case  
+F(3) = F(2) + F(1) = 1 + 1 = 2.
+B4: Một trường hợp nằm trước B3  
+F(4) = F(3) + F(2) = 2 + 1 = 3. */
+
+int F(int n) {
+    if (n == 1 || n == 2) return 1;
+    int a = 1, b = 1, result = 0;
+    for (int i = 3; i <= n; i++) {
+        result = a + b;
+        a = b;
+        b = result;
+    }
+    return result;
+}
+
+int main(){
+    int n = 7;
+    printf("Kết quả hàm f: %d với n = %d \n", f(n), n);
+    printf("Kết quả hàm g: %d với n = %d \n", g(n), n);
+    printf("Kết quả hàm F: %d với n = %d \n", F(n), n);
+    printf("Kết quả hàm P: %d với n = %d \n", P(n), n);
+}
+
+
 //Bài 2
 
 //Bài 2.1
@@ -17,7 +118,7 @@ int main(){
     printArray(arr, n);
 }
 
-//Bài 2.1
+//Bài 2.2
 #include <stdio.h>
 
 int linearSearch(int arr[], int n, int value){
