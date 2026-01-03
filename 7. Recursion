@@ -287,3 +287,100 @@ int main(){
     printf("\nFound %d at %d",value, index );
     return 0;
 }
+
+
+// Bài 3
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX 20
+
+// Cấu trúc Stack đại diện cho chiếc hộp
+typedef struct {
+    int data[MAX];
+    int top;
+} Stack;
+
+void initStack(Stack *s) {
+    s->top = -1;
+}
+
+int isFull(Stack *s) {
+    return s->top == MAX - 1;
+}
+
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+void push(Stack *s, int value) {
+    if (!isFull(s)) {
+        s->data[++(s->top)] = value;
+    }
+}
+
+int pop(Stack *s) {
+    if (!isEmpty(s)) {
+        return s->data[(s->top)--];
+    }
+    return 0;
+}
+
+void lamBoThe(Stack *s) {
+    int value = rand() % 10 + 1;
+    push(s, value);
+    printf("Lam bo the so: %d vao hop.\n", value);
+    if (value == 1) {
+        return;
+    }
+    if (!isFull(s)) {
+        lamBoThe(s);
+    }
+}
+
+int nhungTinhTong(Stack *s) {
+    if (isEmpty(s)) {
+        return 0;
+    }
+    int currentCard = pop(s);
+    printf("Nhung lay the so: %d\n", currentCard);
+    
+    return currentCard + nhungTinhTong(s);
+}
+
+int main() {
+    srand(time(NULL));
+
+    Stack chiecHop;
+    initStack(&chiecHop);
+
+    printf("Qua trinh Lam bo the\n");
+    lamBoThe(&chiecHop);
+
+    printf("\nQua trinh Nhung tinh tong\n");
+    int tong = nhungTinhTong(&chiecHop);
+
+    printf("\n=> Tong cac the Nhung da lay ra la: %d\n", tong);
+
+    return 0;
+}
+
+/*Phân tích hàm lamBoThe theo quy trình 4 bước
+Bước 1 (Base case): Khi số ngẫu nhiên vừa sinh ra có giá trị bằng 1 hoặc khi Stack đã đầy 20 thẻ.
+Bước 2 (Kết quả Base case): Thực hiện lệnh push thẻ số 1 đó vào hộp và kết thúc hàm, không gọi thêm bất kỳ lời gọi đệ quy nào nữa.
+Bước 3 (1 bước trước Base case): Sinh ra một số n != 1. Thực hiện push(n) vào hộp, sau đó gọi chính hàm lamBoThe để tìm kiếm tấm thẻ tiếp theo.
+Bước 4 (Bước trước Bước 3): Tương tự bước 3, là trạng thái khi hộp đang trống hoặc đã có một vài thẻ, tiếp tục thực hiện quy trình: Sinh số -> Push vào hộp -> Kiểm tra điều kiện dừng.
+
+*Phân tích hàm nhungTinhTong theo quy trình 4 bước
+Bước 1 (Base case): Khi kiểm tra thấy Stack rỗng (isEmpty == true), nghĩa là Nhung đã lấy hết thẻ trong hộp ra.
+Bước 2 (Kết quả Base case): Trả về giá trị 0. 
+Bước 3 (1 bước trước Base case): Trong hộp chỉ còn lại đúng 1 tấm thẻ cuối cùn(cũng là thẻ đầu tiên Lâm bỏ vào).
++ Lấy thẻ đó ra (giả sử giá trị là x).
++ Kết quả trả về = x + nhungTinhTong(hộp rỗng) => x + 0 = x.
+Bước 4 (Bước trước Bước 3): Trong hộp còn 2 tấm thẻ.
++ Lấy thẻ trên cùng ra (giả sử giá trị y).
++ Kết quả trả về = y + nhungTinhTong(hộp còn 1 thẻ) => y + x.
+*/
