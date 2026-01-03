@@ -87,3 +87,127 @@ int main() {
     }
     
 }
+
+
+// Bài 2
+//Bài 1
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int bubbleSort(int arr[], int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            count++; 
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+    return count;
+}
+
+int selectionSort(int arr[], int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++) {
+            count++;
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        }
+        swap(&arr[min_idx], &arr[i]);
+    }
+    return count;
+}
+
+int insertionSort(int arr[], int n) {
+    int count = 0;
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            count++; 
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+        if (j >= 0) count++; 
+    }
+    return count;
+}
+
+int partition(int arr[], int left, int right) {
+    int pivot = arr[right];
+    int i = left - 1;
+    for (int j = left; j < right; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[right]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int left, int right, int *counts) {
+    if (left < right) {
+        (*counts)++; 
+        int pivot = partition(arr, left, right);
+        quickSort(arr, left, pivot - 1, counts);
+        quickSort(arr, pivot + 1, right, counts);
+    }
+}
+
+void copyArray(int source[], int dest[], int n) {
+    for (int i = 0; i < n; i++) dest[i] = source[i];
+}
+
+void evaluate(int originalArr[], int n, char* description) {
+    int temp[100], steps;
+    printf("\n--- %s---\n", description);
+
+    // Bubble Sort
+    copyArray(originalArr, temp, n);
+    steps = bubbleSort(temp, n);
+    printf("Bubble Sort   : %d buoc so sanh\n", steps);
+
+    // Selection Sort
+    copyArray(originalArr, temp, n);
+    steps = selectionSort(temp, n);
+    printf("Selection Sort: %d buoc so sanh\n", steps);
+
+    // Insertion Sort
+    copyArray(originalArr, temp, n);
+    steps = insertionSort(temp, n);
+    printf("Insertion Sort: %d buoc so sanh/dich chuyen\n", steps);
+
+    // Quick Sort
+    copyArray(originalArr, temp, n);
+    int qCount = 0;
+    quickSort(temp, 0, n - 1, &qCount);
+    printf("Quick Sort    : %d lan goi phan hoach\n", qCount);
+}
+
+int main() {
+    int a1[] = {3, 2, 9, 7, 5};
+    evaluate(a1, 5, "Cau a. (n = 5) 3 2 9 7 5");
+
+    int a2[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    evaluate(a2, 10, "Cau b. (n = 10) 10 9 8 7 6 5 4 3 2 1");
+
+    int a3[] = {4, 3, 2, 6, 5, -3, 5, 7, -3, 1, -3, 5, 7, 9, 7, -5, 3, 2, 1, 2};
+    evaluate(a3, 20, "Cau c. (n = 20) 4 3 2 6 5 -3 5 7 -3 1 -3 5 7 9 7 -5 3 2 1 2");
+
+    int a4[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 11, 17, 14, 15, 16, 13, 18, 19, 20};
+    evaluate(a4, 20, "Cau d. (n = 20) 1 2 3 4 5 6 7 8 9 10 12 11 17 14 15 16 13 18 19 20");
+
+    return 0;
+}
