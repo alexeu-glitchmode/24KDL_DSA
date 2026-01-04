@@ -1,0 +1,84 @@
+//Practice 2
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType {
+    int data;
+    struct NodeType* left, * right;
+} TreeNode;
+
+typedef struct BinaryTreeType {
+    struct NodeType* root;
+} BinaryTree;
+
+// Create a new node in memory
+TreeNode* makeNode(int data) {
+    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Initialize the tree to be empty
+void init(BinaryTree* tree) {
+    tree->root = NULL;
+}
+
+// Recursive helper for insertion
+TreeNode* insertNode(TreeNode* node, int data) {
+    if (node == NULL) {
+        return makeNode(data);
+    }
+    if (data < node->data) {
+        node->left = insertNode(node->left, data);
+    } else if (data > node->data) {
+        node->right = insertNode(node->right, data);
+    }
+    return node;
+}
+
+// Wrapper function to insert into the BinaryTree structure
+void insert(BinaryTree* tree, int data) {
+    tree->root = insertNode(tree->root, data);
+}
+
+// Standard In-order traversal (Left - Root - Right)
+void print(TreeNode* node) {
+    if (node != NULL) {
+        print(node->left);
+        printf("%d ", node->data);
+        print(node->right);
+    }
+}
+
+int main() {
+    BinaryTree tree;
+    init(&tree);
+
+    // Sequence 1.1.1: 4, 6, 2, 3, 5, 1, 7
+    int data[] = {4, 6, 2, 3, 5, 1, 7};
+    int n = sizeof(data) / sizeof(data[0]);
+
+    for (int i = 0; i < n; i++) {
+        insert(&tree, data[i]);
+    }
+
+    printf("BST In-order Output (Question 1.2): \n");
+    print(tree.root);
+    printf("\n");
+
+    return 0;
+    
+}
+
+int searchValues[] = {40, 52, 100, 24};
+for(int i = 0; i < 4; i++) {
+    TreeNode* result = search(tree.root, searchValues[i]);
+    if(result != NULL) {
+        printf("Tim thay %d tai dia chi %p\n", result->data, (void*)result);
+    } else {
+        printf("Khong tim thay %d (NULL)\n", searchValues[i]);
+    }
+}
