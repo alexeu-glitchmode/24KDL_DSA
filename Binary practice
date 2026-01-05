@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType {
+    int data;
+    struct NodeType* left, * right;
+} TreeNode;
+
+typedef struct BinaryTreeType {
+    struct NodeType* root;
+} BinaryTree;
+
+TreeNode* makeNode(int data) {
+    TreeNode *node = (TreeNode*)malloc(sizeof(TreeNode));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+void print(TreeNode* node) {
+    if(node == NULL){
+        return;
+    }
+    print(node->left);
+    printf("%d ", node->data);
+    print(node->right);
+    
+}
+
+void init(BinaryTree* tree) {
+    tree->root = NULL;
+}
+TreeNode* insertNode(TreeNode* node, int data) {
+    if (node == NULL) {
+        return makeNode(data);
+    }
+    if (data < node->data) {
+        node->left = insertNode(node->left, data);
+    } else if (data > node->data) {
+        node->right = insertNode(node->right, data);
+    }
+    return node;
+}
+
+void insert(BinaryTree* tree, int data) {
+    tree->root = insertNode(tree->root, data);
+}
+
+int main() {
+    BinaryTree tree;
+    init(&tree);
+    //insert các cây ở câu 1.1
+    int data1[] = {4, 6, 2, 3, 5, 1, 7};
+    int n1 = sizeof(data1) / sizeof(data1[0]);
+
+    for (int i = 0; i < n1; i++) {
+        insert(&tree, data1[i]);
+    }
+
+    printf("1.1.1: \n");
+    print(tree.root);
+    printf("\n");
+    
+    int data2[] = {48, 10, 3 ,6 ,14, 1, 7 ,13, 4};
+    int n2= sizeof(data2) / sizeof(data2[0]);
+
+    for (int i = 0; i < n2; i++) {
+        insert(&tree, data2[i]);
+    }
+
+    printf("\n1.1.2: \n");
+    print(tree.root);
+    
+     int data3[] = { 50, 25, 75, 10, 33, 56 ,89 ,4 ,11, 40, 52, 61, 82, 95};
+    int n3= sizeof(data3) / sizeof(data2[0]);
+
+    for (int i = 0; i < n3; i++) {
+        insert(&tree, data3[i]);
+    }
+
+    printf("\n\n1.1.3: \n");
+    print(tree.root);
+    return 0;
+}
