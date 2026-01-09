@@ -190,3 +190,79 @@ int main(){
     printList(&list);
     return 0;
 }
+
+
+/Bài 1
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType{
+    int data;
+    struct NodeType* next;
+} Node;
+
+typedef struct LinkedListType{
+    Node* head;
+} LinkedList;
+
+void init(LinkedList* list){
+    list->head = NULL;
+}
+
+Node* makeNode(int data){
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Hàm chèn vào vị trí k sử dụng đệ quy (k tính từ 1)
+Node* insertAtKRecursive(Node* current, int data, int k){
+    if(k == 1){
+        Node* newNode = makeNode(data);
+        newNode->next = current;
+        return newNode;
+    }
+    if(current != NULL){
+        current->next = insertAtKRecursive(current->next, data, k - 1);
+    }
+    return current;
+}
+
+void insertAtK(int data, int k, LinkedList* list){
+    list->head = insertAtKRecursive(list->head, data, k);
+}
+
+void printList(LinkedList* list){
+    Node* node = list->head;
+    while(node != NULL){
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main(){
+    LinkedList list;
+    init(&list);
+
+    // Tạo danh sách ban đầu: 2 3 4 5 6 7
+    int arr[] = {7, 6, 5, 4, 3, 2};
+    for(int i = 0; i < 6; i++){
+        Node* newNode = makeNode(arr[i]);
+        newNode->next = list.head;
+        list.head = newNode;
+    }
+
+    printf("Danh sach ban dau: ");
+    printList(&list);
+
+    int data = 1, k = 2;
+    printf("Chen data %d vao vi tri k = %d\n", data, k);
+    insertAtK(data, k, &list);
+
+    printf("Danh sach sau khi chen: ");
+    printList(&list);
+
+    return 0;
+}
