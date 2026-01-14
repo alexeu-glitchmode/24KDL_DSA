@@ -192,7 +192,7 @@ int main(){
 }
 
 
-/Bài 1
+//Bài 1
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -233,6 +233,22 @@ void insertAtK(int data, int k, LinkedList* list){
     list->head = insertAtKRecursive(list->head, data, k);
 }
 
+Node* deleteAtKRecursive(Node* current, int k){
+    if(current == NULL){
+        return NULL;
+    }
+    if(k==1){
+        Node* temp = current->next;
+        free(current);
+        return temp; // trả về node tiếp theo làm head mới
+    }
+    current->next = deleteAtKRecursive(current->next, k-1);
+    return current;
+}
+
+void deleteAtK(LinkedList* list, int k){
+    list->head = deleteAtKRecursive(list->head, k);
+}
 void printList(LinkedList* list){
     Node* node = list->head;
     while(node != NULL){
@@ -263,6 +279,261 @@ int main(){
 
     printf("Danh sach sau khi chen: ");
     printList(&list);
+    
+    int h = 3;
+    printf("Xóa node tại vị trí k = 3:\n");
+    deleteAtK(&list, h);
+    printList(&list);
+
+    return 0;
+}
+
+
+//Bài 2
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType{
+    int data;
+    struct NodeType* next;
+} Node;
+
+typedef struct LinkedListType{
+    Node* head;
+} LinkedList;
+
+void init(LinkedList* list){
+    list->head = NULL;
+}
+
+Node* makeNode(int data){
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insert(LinkedList* list, int data){
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    // Nếu danh sách rỗng hoặc data lớn hơn head -> chèn đầu
+    if(list->head == NULL || data >= list->head->data){
+        newNode->next = list->head;
+        list->head = newNode;
+        return;
+    }
+    Node* current = list->head;
+    while(current->next != NULL && current->next->data > data){
+        current = current->next;
+    }
+    newNode->next = current->next;
+    current->next = newNode;
+}
+
+void delete(LinkedList* list, int value) {
+    if(list->head == NULL) return;
+
+    Node* current = list->head;
+
+    // Nếu node đầu có giá trị cần xóa
+    if(current->data == value) {
+        list->head = current->next;
+        free(current);
+        return;
+    }
+
+    while(current->next != NULL && current->next->data != value) {
+        current = current->next;
+    }
+
+    if(current->next != NULL) {
+        Node* temp = current->next;
+        current->next = temp->next;
+        free(temp);
+    }
+}
+
+void printList(LinkedList* list){
+    Node* node = list->head;
+    while(node != NULL){
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    LinkedList list;
+    list.head = NULL;
+
+    // Chèn vào danh sách giảm dần
+    insert(&list, 10);
+    insert(&list, 30);
+    insert(&list, 20);
+    insert(&list, 40);
+
+    printf("Danh sach giam dan: ");
+    printList(&list);  // Kết quả: 40 30 20 10
+
+    // Xóa trong danh sách tăng dần (giả sử ta tạo lại danh sách tăng dần)
+    LinkedList list2;
+    list2.head = NULL;
+
+    // Tạo danh sách tăng dần: 10 20 30 40
+    Node* n1 = (Node*)malloc(sizeof(Node)); n1->data = 10;
+    Node* n2 = (Node*)malloc(sizeof(Node)); n2->data = 20;
+    Node* n3 = (Node*)malloc(sizeof(Node)); n3->data = 30;
+    Node* n4 = (Node*)malloc(sizeof(Node)); n4->data = 40;
+    n1->next = n2; n2->next = n3; n3->next = n4; n4->next = NULL;
+    list2.head = n1;
+
+    printf("Danh sach tang dan ban dau: ");
+    printList(&list2);  // 10 20 30 40
+
+    delete(&list2, 30);
+    printf("Danh sach sau khi xoa 30: ");
+    printList(&list2);  // 10 20 40
+
+    return 0;
+}
+
+//Bai 3
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Stack {
+    Node* top;
+} Stack;
+
+void initStack(Stack* s) {
+    s->top = NULL;
+}
+
+int isEmptyStack(Stack* s) {
+    return s->top == NULL;
+}
+
+void push(Stack* s, int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = s->top;
+    s->top = newNode;
+}
+
+int pop(Stack* s) {
+    if(isEmptyStack(s)) {
+        printf("Stack rong!\n");
+        return -1;
+    }
+    Node* temp = s->top;
+    int value = temp->data;
+    s->top = temp->next;
+    free(temp);
+    return value;
+}
+
+int peek(Stack* s) {
+    if(isEmptyStack(s)) {
+        printf("Stack rong!\n");
+        return -1;
+    }
+    return s->top->data;
+}
+
+void printStack(Stack* s) {
+    Node* current = s->top;
+    printf("Stack: ");
+    while(current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+
+typedef struct Queue {
+    Node* front;
+    Node* rear;
+} Queue;
+
+void initQueue(Queue* q) {
+    q->front = q->rear = NULL;
+}
+
+int isEmptyQueue(Queue* q) {
+    return q->front == NULL;
+}
+
+void enqueue(Queue* q, int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if(isEmptyQueue(q)) {
+        q->front = q->rear = newNode;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+    }
+}
+
+int dequeue(Queue* q) {
+    if(isEmptyQueue(q)) {
+        printf("Queue rong!\n");
+        return -1;
+    }
+    Node* temp = q->front;
+    int value = temp->data;
+    q->front = temp->next;
+    if(q->front == NULL) q->rear = NULL;
+    free(temp);
+    return value;
+}
+
+int peekQueue(Queue* q) {
+    if(isEmptyQueue(q)) {
+        printf("Queue rong!\n");
+        return -1;
+    }
+    return q->front->data;
+}
+
+void printQueue(Queue* q) {
+    Node* current = q->front;
+    printf("Queue: ");
+    while(current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    // Stack demo
+    Stack s;
+    initStack(&s);
+    push(&s, 10);
+    push(&s, 20);
+    push(&s, 30);
+    printStack(&s);
+    printf("Pop: %d\n", pop(&s));
+    printStack(&s);
+
+    // Queue demo
+    Queue q;
+    initQueue(&q);
+    enqueue(&q, 1);
+    enqueue(&q, 2);
+    enqueue(&q, 3);
+    printQueue(&q);
+    printf("Dequeue: %d\n", dequeue(&q));
+    printQueue(&q);
 
     return 0;
 }
