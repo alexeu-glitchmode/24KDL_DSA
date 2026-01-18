@@ -490,3 +490,64 @@ int main() {
     return 0;
 }
 
+
+//CHÈN
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NodeType {
+    int data;
+    struct NodeType *left, *right;
+} TreeNode;
+
+typedef struct BinaryTreeType {
+    TreeNode *root;
+} BinaryTree;
+
+TreeNode* makeNode(int data) {
+    TreeNode *node = (TreeNode*)malloc(sizeof(TreeNode));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+void print(TreeNode *node) {
+    if (node == NULL)
+        return;
+    print(node->left);
+    printf("%d ", node->data);
+    print(node->right);
+}
+
+void init(BinaryTree *tree) {
+    tree->root = NULL;
+}
+
+TreeNode* insertNode(TreeNode *root, int data) {
+    if (root == NULL)
+        return makeNode(data);
+
+    if (data < root->data)
+        root->left = insertNode(root->left, data);
+    else if (data > root->data)
+        root->right = insertNode(root->right, data);
+
+    return root;
+}
+
+void insert(BinaryTree *tree, int data) {
+    tree->root = insertNode(tree->root, data);
+}
+
+int main() {
+    BinaryTree tree;
+    init(&tree);
+    int a[9] = {4,6,2,3,5,1,7};
+    for (int i = 0; i < 7; i++) {
+        insert(&tree, a[i]);
+    }
+    print(tree.root);
+    printf("\n");
+    return 0;
+}
